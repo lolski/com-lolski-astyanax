@@ -22,7 +22,12 @@ java_binary(
     deps = [
         "//dependencies/artifacts/com/datastax/cassandra:cassandra-driver-core",
         "//dependencies/artifacts/org/janusgraph:janusgraph-core",
-    ]
+        "//dependencies/artifacts/org/janusgraph:janusgraph-cassandra",
+        "//dependencies/artifacts/org/apache/tinkerpop:gremlin-core",
+    ],
+    runtime_deps = [
+        "//dependencies/artifacts/org/apache/cassandra:cassandra-all"
+    ],
 )
 
 java_deps(
