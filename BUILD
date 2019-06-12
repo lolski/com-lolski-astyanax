@@ -19,6 +19,10 @@ java_binary(
     name = "table-pretty-printer",
     main_class = "com.lolski.janusgraph.TablePrettyPrinter",
     srcs = ["com/lolski/janusgraph/TablePrettyPrinter.java"],
+    deps = [
+        "//dependencies/artifacts/com/datastax/cassandra:cassandra-driver-core",
+        "//dependencies/artifacts/org/janusgraph:janusgraph-core",
+    ]
 )
 
 java_deps(
