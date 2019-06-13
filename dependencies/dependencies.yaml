@@ -17,12 +17,12 @@ options:
 dependencies:
   org.janusgraph:
     janusgraph-cassandra:
-      version: "0.4.0-grakn"
+      version: "ada4ba8307b13094459874f2f67652f914075f8f"
       lang: java
       exclude:
         - "org.apache.cassandra:cassandra-all"
     janusgraph-core:
-      version: "0.4.0-grakn"
+      version: "ada4ba8307b13094459874f2f67652f914075f8f"
       lang: java
   org.apache.tinkerpop:
     gremlin-core:
