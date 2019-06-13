@@ -7,6 +7,7 @@ import com.datastax.driver.core.Session;
 import org.apache.tinkerpop.gremlin.structure.Vertex;
 import org.janusgraph.core.JanusGraph;
 import org.janusgraph.core.JanusGraphFactory;
+import org.janusgraph.core.JanusGraphTransaction;
 import org.janusgraph.diskstorage.util.StaticArrayBuffer;
 import org.janusgraph.graphdb.database.StandardJanusGraph;
 import org.janusgraph.graphdb.idmanagement.IDManager;
@@ -17,10 +18,36 @@ import java.util.Collections;
 import java.util.List;
 
 @SuppressWarnings("Duplicates")
-public class TablePrettyPrinter {
+public class StorageInvestigation {
     public static void main(String[] args) {
+        readWriteDebugging(args[0]);
+    }
+
+    private static void readWriteDebugging(String keyspace_) {
         String host = "localhost";
-        String keyspace = args[0];
+        String keyspace = keyspace_;
+        StandardJanusGraph graph = null;
+        try {
+            graph = (StandardJanusGraph) JanusGraphFactory.build().
+                    set("storage.backend", "cassandra").
+                    set("storage.hostname", host).
+                    set("storage.cassandra.keyspace", keyspace).
+                    open();
+
+            JanusGraphTransaction tx = graph.newTransaction();
+            tx.addVertex("henlo");
+            List<Vertex> v = tx.traversal().V().hasLabel("henlo").toList();
+            System.out.println("------ size=" + v.size() + ", id=" + v.get(0));
+            tx.commit();
+        }
+        finally {
+            graph.close();
+        }
+    }
+
+    private static void tablePrettyPrinter(String keyspace_) {
+        String host = "localhost";
+        String keyspace = keyspace_;
 
         StandardJanusGraph graph = null;
         Cluster cluster  = null;
@@ -35,9 +62,7 @@ public class TablePrettyPrinter {
             IDManager idManager = graph.getIDManager();
             cluster = Cluster.builder().addContactPoint(host).build();
             session = cluster.connect(keyspace);
-            graph.addVertex("henlo");
-            List<Vertex> v = graph.traversal().V().hasLabel("henlo").toList();
-            System.out.println("------ size=" + v.size() + ", id=" + v.get(0));
+
             // print janusgraph_ids
             ResultSet janusgraph_ids1 = session.execute("select * from janusgraph_ids");
             for (Row result : janusgraph_ids1.all()) {
