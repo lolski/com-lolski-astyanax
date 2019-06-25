@@ -11,6 +11,7 @@ import org.janusgraph.core.JanusGraphTransaction;
 import org.janusgraph.diskstorage.util.StaticArrayBuffer;
 import org.janusgraph.graphdb.database.StandardJanusGraph;
 import org.janusgraph.graphdb.idmanagement.IDManager;
+import org.janusgraph.graphdb.transaction.StandardJanusGraphTx;
 
 import java.nio.ByteBuffer;
 import java.util.Arrays;
@@ -20,9 +21,27 @@ import java.util.List;
 @SuppressWarnings("Duplicates")
 public class StorageInvestigation {
     public static void main(String[] args) {
-        readWriteDebugging(args[0]);
+        memoryDebugging(args[0]);
     }
-    
+
+    private static void memoryDebugging(String keyspace_) {
+        String host = "localhost";
+        String keyspace = keyspace_;
+        StandardJanusGraph graph = (StandardJanusGraph) JanusGraphFactory.build().
+                set("storage.backend", "cassandrathrift").
+                set("storage.hostname", host).
+                set("storage.cassandra.keyspace", keyspace).
+                open();
+
+        for (int i = 0; i < 1000; ++i) {
+            JanusGraphTransaction tx = graph.newTransaction();
+            tx.commit();
+        }
+
+        graph.close();
+    }
+
+
     private static void readWriteDebugging(String keyspace_) {
         String host = "localhost";
         String keyspace = keyspace_;
