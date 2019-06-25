@@ -22,14 +22,14 @@ public class StorageInvestigation {
     public static void main(String[] args) {
         readWriteDebugging(args[0]);
     }
-
+    
     private static void readWriteDebugging(String keyspace_) {
         String host = "localhost";
         String keyspace = keyspace_;
         StandardJanusGraph graph = null;
         try {
             graph = (StandardJanusGraph) JanusGraphFactory.build().
-                    set("storage.backend", "cassandra").
+                    set("storage.backend", "cassandrathrift").
                     set("storage.hostname", host).
                     set("storage.cassandra.keyspace", keyspace).
                     open();
